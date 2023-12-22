@@ -1,18 +1,9 @@
-<!-- SignUp.vue -->
+<!-- Login.vue -->
 
 <template>
-  <div class="signup-container">
-    <img
-      src="https://img.freepik.com/premium-vector/restaurant-logo-with-fork-spoon-illustration_337180-722.jpg?w=740"
-      alt="Restaurant Theme"
-      class="restaurant-image"
-    />
-    <h1>Sign up</h1>
-    <form @submit.prevent="submitForm" class="signup-form">
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" id="name" v-model="name" required />
-      </div>
+  <div class="login-container">
+    <h1>Login</h1>
+    <form @submit.prevent="submitForm" class="login-form">
       <div class="form-group">
         <label for="email">Email:</label>
         <input type="email" id="email" v-model="email" required />
@@ -21,33 +12,41 @@
         <label for="password">Password:</label>
         <input type="password" id="password" v-model="password" required />
       </div>
-      <button type="submit">Sign Up</button>
+      <button type="submit">Log In</button>
     </form>
-    <p>Already have an account?<router-link to="/log-in">Login</router-link></p>
+    <p>
+      Don't have an account?<router-link to="/sign-up">Sign Up</router-link>
+    </p>
   </div>
 </template>
 
 <script>
 import axios from "axios";
+
 export default {
-  name: "SignUp",
+  name: "LoginPage",
   data() {
     return {
-      name: "",
       email: "",
       password: "",
     };
   },
   methods: {
     async submitForm() {
-      const res = await axios.post("http://localhost:4000/users", {
-        name: this.name,
-        email: this.email,
-        password: this.password,
-      });
-      console.log(res);
-      if (res.status === 201) {
-        alert("User successfully signed up.");
+      try {
+        const res = await axios.get(
+          `http://localhost:4000/users?email=${this.email}&password=${this.password}`
+        );
+
+        console.log(res);
+
+        if (res.status == 200) {
+          localStorage.setItem("user-info", JSON.stringify(res.data));
+          this.$router.push("/");
+        }
+      } catch (error) {
+        console.error("Login failed:", error);
+        alert("Login failed. Please check your credentials.");
       }
     },
   },
@@ -61,23 +60,16 @@ export default {
 </script>
 
 <style scoped>
-.signup-container {
+.login-container {
   max-width: 400px;
   margin: auto;
   padding: 20px;
   text-align: center;
 }
 
-.signup-form {
+.login-form {
   display: flex;
   flex-direction: column;
-}
-
-.restaurant-image {
-  width: 100px; /* Set your preferred width */
-  height: 100px; /* Set your preferred height */
-  border-radius: 50%; /* Make the image rounded */
-  margin-bottom: 20px;
 }
 
 .form-group {
