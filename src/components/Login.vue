@@ -1,6 +1,5 @@
-<!-- Login.vue -->
-
 <template>
+  <Header />
   <div class="login-container">
     <h1>Login</h1>
     <form @submit.prevent="submitForm" class="login-form">
@@ -22,9 +21,13 @@
 
 <script>
 import axios from "axios";
+import Header from "./Header.vue";
 
 export default {
   name: "LoginPage",
+  components: {
+    Header,
+  },
   data() {
     return {
       email: "",
@@ -35,14 +38,14 @@ export default {
     async submitForm() {
       try {
         const res = await axios.get(
-          `http://localhost:4000/users?email=${this.email}&password=${this.password}`
+          `http://localhost:3000/users?email=${this.email}&password=${this.password}`
         );
 
-        console.log(res);
-
-        if (res.status == 200) {
-          localStorage.setItem("user-info", JSON.stringify(res.data));
+        if (res.status === 200 && res.data.length > 0) {
+          localStorage.setItem("user-info", JSON.stringify(res.data[0]));
           this.$router.push("/");
+        } else {
+          alert("Login failed. Please check your credentials.");
         }
       } catch (error) {
         console.error("Login failed:", error);
@@ -50,9 +53,10 @@ export default {
       }
     },
   },
-  mounted() {
-    let user = localStorage.getItem("user-info");
-    if (user) {
+  created() {
+    // Check if the user is already logged in using information from localStorage
+    const userInfo = localStorage.getItem("user-info");
+    if (userInfo) {
       this.$router.push("/");
     }
   },

@@ -1,6 +1,7 @@
 <!-- SignUp.vue -->
 
 <template>
+  <Header />
   <div class="signup-container">
     <img
       src="https://img.freepik.com/premium-vector/restaurant-logo-with-fork-spoon-illustration_337180-722.jpg?w=740"
@@ -29,8 +30,12 @@
 
 <script>
 import axios from "axios";
+import Header from "./Header.vue";
 export default {
   name: "SignUp",
+  components: {
+    Header,
+  },
   data() {
     return {
       name: "",
@@ -40,7 +45,7 @@ export default {
   },
   methods: {
     async submitForm() {
-      const res = await axios.post("http://localhost:4000/users", {
+      const res = await axios.post("http://localhost:3000/users", {
         name: this.name,
         email: this.email,
         password: this.password,
@@ -51,9 +56,9 @@ export default {
       }
     },
   },
-  mounted() {
-    let user = localStorage.getItem("user-info");
-    if (user) {
+  created() {
+    const userInfo = localStorage.getItem("user-info");
+    if (userInfo) {
       this.$router.push("/");
     }
   },
