@@ -54,7 +54,6 @@ export default {
     },
   },
   created() {
-    // Check if the user is already logged in using information from localStorage
     const userInfo = localStorage.getItem("user-info");
     if (userInfo) {
       this.$router.push("/");
